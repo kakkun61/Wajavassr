@@ -20,9 +20,12 @@ import org.json.simple.parser.ParseException;
 <<<<<<< HEAD
 public class Wajavassr
 {
+<<<<<<< HEAD
 =======
 public class Wajavassr {
 >>>>>>> 8a102e4... 諸々更新
+=======
+>>>>>>> 363f85f... 諸々更新
     protected final String wassr = "http://api.wassr.jp";
     protected String auth = null;
     protected static final String DEFAULT_USER_AGENT = "Wajavassr/00.03";
@@ -39,7 +42,12 @@ public class Wajavassr {
      * @param user ログイン名
      * @param password パスワード or 認証トークン
      */
+<<<<<<< HEAD
     public Wajavassr( String user, String password ) {
+=======
+    public Wajavassr( String user, String password )
+    {
+>>>>>>> 363f85f... 諸々更新
         setUser( user, password );
     }
 
@@ -48,7 +56,12 @@ public class Wajavassr {
      * @param user ログイン名
      * @param password パスワード or 認証トークン
      */
+<<<<<<< HEAD
     public void setUser( String user, String password ) {
+=======
+    public void setUser( String user, String password )
+    {
+>>>>>>> 363f85f... 諸々更新
         auth = createAuthentication( user, password );
     }
 
@@ -58,7 +71,12 @@ public class Wajavassr {
      * @param password パスワード or 認証トークン
      * @return authentication 認証文字列
      */
+<<<<<<< HEAD
     protected static String createAuthentication( String user, String password ) {
+=======
+    protected static String createAuthentication( String user, String password )
+    {
+>>>>>>> 363f85f... 諸々更新
         return new String( Base64.encodeBase64( ( user + ":" + password ).getBytes() ) );
     }
 
@@ -66,7 +84,12 @@ public class Wajavassr {
      * User Agent を得る。
      * @return
      */
+<<<<<<< HEAD
     public String getUserAgent() {
+=======
+    public String getUserAgent()
+    {
+>>>>>>> 363f85f... 諸々更新
         return userAgent;
     }
 
@@ -74,7 +97,12 @@ public class Wajavassr {
      * User Agent を設定する。引数 {@code userAgent} が {@code null} の場合デフォルト値に設定。
      * @param userAgent 新たに設定する User Agent。{@code null} の場合デフォルト値に設定。
      */
+<<<<<<< HEAD
     public void setUserAgent( String userAgent ) {
+=======
+    public void setUserAgent( String userAgent )
+    {
+>>>>>>> 363f85f... 諸々更新
         if( userAgent == null )
             this.userAgent = DEFAULT_USER_AGENT;
         else
@@ -88,12 +116,21 @@ public class Wajavassr {
      * @return 確立したコネクション
      * @throws IOException コネクションの確立に失敗。
      */
+<<<<<<< HEAD
     protected URLConnection createURLConnection( String method, String path, boolean authorization ) throws IOException {
         HttpURLConnection c = (HttpURLConnection)new URL( wassr + path ).openConnection();
         c.setRequestMethod( method );
         c.setRequestProperty( "User-Agent", userAgent );
         if(authorization)
             c.setRequestProperty( "Authorization", "Basic " + auth );
+=======
+    protected URLConnection createURLConnection( String method, String path ) throws IOException
+    {
+        HttpURLConnection c = (HttpURLConnection)new URL( wassr + path ).openConnection();
+        c.setRequestMethod( method );
+        c.setRequestProperty( "User-Agent", userAgent );
+        c.setRequestProperty( "Authorization", "Basic " + auth );
+>>>>>>> 363f85f... 諸々更新
         return c;
     }
 
@@ -103,6 +140,7 @@ public class Wajavassr {
      * @throws IOException
      * @throws ParseException
      */
+<<<<<<< HEAD
     public JSONArray getReplies() throws IOException, ParseException {
         URLConnection c = createURLConnection( "GET", "/statuses/replies.json", true );
         c.connect();
@@ -111,11 +149,26 @@ public class Wajavassr {
         try {
             json = (JSONArray)parser.parse( r );
         } finally {
+=======
+    public JSONArray getReplies() throws IOException, ParseException
+    {
+        URLConnection c = createURLConnection( "GET", "/statuses/replies.json" );
+        c.connect();
+        BufferedReader r = new BufferedReader( new InputStreamReader( c.getInputStream(), "UTF-8" ) );
+        JSONArray json;
+        try
+        {
+            json = (JSONArray)parser.parse( r );
+        }
+        finally
+        {
+>>>>>>> 363f85f... 諸々更新
             r.close();
         }
         return json;
     }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 	/**
 	 *
@@ -265,12 +318,15 @@ public class Wajavassr {
 
 =======
 >>>>>>> e245420... 諸々更新
+=======
+>>>>>>> 363f85f... 諸々更新
     /**
      *
      * @return
      * @throws IOException コネクションの確立に失敗、または読み込みの失敗。
      * @throws ParseException JSON のパースに失敗。
      */
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
     public List<FriendHitokoto> getFriendTimelie() throws IOException, ParseException {
@@ -306,6 +362,24 @@ public class Wajavassr {
 =======
         for( Object o : jhs ) {
 >>>>>>> 8a102e4... 諸々更新
+=======
+    public List<FriendHitokoto> getFriendTimelie() throws IOException, ParseException
+    {
+        List<FriendHitokoto> hitokotos = new ArrayList<FriendHitokoto>();
+        URLConnection c = createURLConnection( "GET", "/statuses/friends_timeline.json" );
+        BufferedReader r = new BufferedReader( new InputStreamReader( c.getInputStream(), "UTF-8" ) );
+        JSONArray jhs; // Json Hitokotos
+        try
+        {
+            jhs = (JSONArray)parser.parse( r );
+        }
+        finally
+        {
+            r.close();
+        }
+        for( Object o : jhs )
+        {
+>>>>>>> 363f85f... 諸々更新
             JSONObject jh = (JSONObject)o;
             JSONObject user = (JSONObject)jh.get( "user" );
             Object[] favorites = ( (JSONArray)jh.get( "favorites" ) ).toArray();
@@ -313,6 +387,7 @@ public class Wajavassr {
                     new FriendHitokoto(
                             (String)jh.get( "html" ),
                             (String)jh.get( "text" ),
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
                             (String)jh.get("rid"),
@@ -324,6 +399,9 @@ public class Wajavassr {
                             (String)jh.get("rid"),
                             (Long)jh.get( "id" ),
 >>>>>>> 6964cbf... rid と id の意味を取り違えていたので訂正
+=======
+                            (String)jh.get( "id" ),
+>>>>>>> 363f85f... 諸々更新
                             (String)jh.get( "link" ),
                             (String)jh.get( "user_login_id" ),
                             (String)user.get( "screen_name" ),
@@ -346,7 +424,10 @@ public class Wajavassr {
         return hitokotos;
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> master
 =======
 >>>>>>> e245420... 諸々更新
+=======
+>>>>>>> 363f85f... 諸々更新
 }
