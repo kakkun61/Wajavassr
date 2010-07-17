@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import kakkun61.wajavassr.Hitokoto;
+import kakkun61.wajavassr.FriendHitokoto;
 import kakkun61.wajavassr.Wajavassr;
 
 import org.json.simple.JSONArray;
@@ -47,7 +47,7 @@ public class Test
 		nowSymbols.setShortWeekdays( usSymbols.getShortWeekdays() );
 		dateForm.setDateFormatSymbols( nowSymbols );
 
-		for( Hitokoto h : w.getFriendTimelie() )
+		for( FriendHitokoto h : w.getFriendTimelie() )
 		{
 			System.out.println( h.getText() );
 			System.out.println( "\tby " + h.getUserScreenName() + " (" + h.getUserLoginId() + ")");
