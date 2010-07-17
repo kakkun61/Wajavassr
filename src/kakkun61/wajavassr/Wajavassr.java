@@ -17,8 +17,12 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 public class Wajavassr
 {
+=======
+public class Wajavassr {
+>>>>>>> 8a102e4... 諸々更新
     protected final String wassr = "http://api.wassr.jp";
     protected String auth = null;
     protected static final String DEFAULT_USER_AGENT = "Wajavassr/00.03";
@@ -35,8 +39,7 @@ public class Wajavassr
      * @param user ログイン名
      * @param password パスワード or 認証トークン
      */
-    public Wajavassr( String user, String password )
-    {
+    public Wajavassr( String user, String password ) {
         setUser( user, password );
     }
 
@@ -45,8 +48,7 @@ public class Wajavassr
      * @param user ログイン名
      * @param password パスワード or 認証トークン
      */
-    public void setUser( String user, String password )
-    {
+    public void setUser( String user, String password ) {
         auth = createAuthentication( user, password );
     }
 
@@ -56,8 +58,7 @@ public class Wajavassr
      * @param password パスワード or 認証トークン
      * @return authentication 認証文字列
      */
-    protected static String createAuthentication( String user, String password )
-    {
+    protected static String createAuthentication( String user, String password ) {
         return new String( Base64.encodeBase64( ( user + ":" + password ).getBytes() ) );
     }
 
@@ -65,8 +66,7 @@ public class Wajavassr
      * User Agent を得る。
      * @return
      */
-    public String getUserAgent()
-    {
+    public String getUserAgent() {
         return userAgent;
     }
 
@@ -74,8 +74,7 @@ public class Wajavassr
      * User Agent を設定する。引数 {@code userAgent} が {@code null} の場合デフォルト値に設定。
      * @param userAgent 新たに設定する User Agent。{@code null} の場合デフォルト値に設定。
      */
-    public void setUserAgent( String userAgent )
-    {
+    public void setUserAgent( String userAgent ) {
         if( userAgent == null )
             this.userAgent = DEFAULT_USER_AGENT;
         else
@@ -89,12 +88,12 @@ public class Wajavassr
      * @return 確立したコネクション
      * @throws IOException コネクションの確立に失敗。
      */
-    protected URLConnection createURLConnection( String method, String path ) throws IOException
-    {
+    protected URLConnection createURLConnection( String method, String path, boolean authorization ) throws IOException {
         HttpURLConnection c = (HttpURLConnection)new URL( wassr + path ).openConnection();
         c.setRequestMethod( method );
         c.setRequestProperty( "User-Agent", userAgent );
-        c.setRequestProperty( "Authorization", "Basic " + auth );
+        if(authorization)
+            c.setRequestProperty( "Authorization", "Basic " + auth );
         return c;
     }
 
@@ -104,18 +103,14 @@ public class Wajavassr
      * @throws IOException
      * @throws ParseException
      */
-    public JSONArray getReplies() throws IOException, ParseException
-    {
-        URLConnection c = createURLConnection( "GET", "/statuses/replies.json" );
+    public JSONArray getReplies() throws IOException, ParseException {
+        URLConnection c = createURLConnection( "GET", "/statuses/replies.json", true );
         c.connect();
         BufferedReader r = new BufferedReader( new InputStreamReader( c.getInputStream(), "UTF-8" ) );
         JSONArray json;
-        try
-        {
+        try {
             json = (JSONArray)parser.parse( r );
-        }
-        finally
-        {
+        } finally {
             r.close();
         }
         return json;
@@ -277,6 +272,7 @@ public class Wajavassr {
      * @throws ParseException JSON のパースに失敗。
      */
 <<<<<<< HEAD
+<<<<<<< HEAD
     public List<FriendHitokoto> getFriendTimelie() throws IOException, ParseException {
         List<FriendHitokoto> hitokotos = new ArrayList<FriendHitokoto>();
         URLConnection c = createURLConnection( "GET", "/statuses/friends_timeline.json", true );
@@ -291,21 +287,25 @@ public class Wajavassr {
 =======
     public List<FriendHitokoto> getFriendTimelie() throws IOException, ParseException
     {
+=======
+    public List<FriendHitokoto> getFriendTimelie() throws IOException, ParseException {
+>>>>>>> 8a102e4... 諸々更新
         List<FriendHitokoto> hitokotos = new ArrayList<FriendHitokoto>();
-        URLConnection c = createURLConnection( "GET", "/statuses/friends_timeline.json" );
+        URLConnection c = createURLConnection( "GET", "/statuses/friends_timeline.json", true );
         BufferedReader r = new BufferedReader( new InputStreamReader( c.getInputStream(), "UTF-8" ) );
         JSONArray jhs; // Json Hitokotos
-        try
-        {
+        try {
             jhs = (JSONArray)parser.parse( r );
-        }
-        finally
-        {
+        } finally {
             r.close();
         }
+<<<<<<< HEAD
         for( Object o : jhs )
         {
 >>>>>>> e245420... 諸々更新
+=======
+        for( Object o : jhs ) {
+>>>>>>> 8a102e4... 諸々更新
             JSONObject jh = (JSONObject)o;
             JSONObject user = (JSONObject)jh.get( "user" );
             Object[] favorites = ( (JSONArray)jh.get( "favorites" ) ).toArray();
@@ -328,6 +328,7 @@ public class Wajavassr {
                             (String)jh.get( "photo_thombnail_url" ),
                             Arrays.copyOf( favorites, favorites.length, String[].class ),
                             (String)jh.get( "reply_message" ),
+                            (String)jh.get("rid"),
                             (String)jh.get( "reply_status_url" ),
                             (String)jh.get( "reply_user_login_id" ),
                             (String)jh.get( "reply_user_nick" ),
