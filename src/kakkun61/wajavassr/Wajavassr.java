@@ -108,9 +108,9 @@ public class Wajavassr
 	 * @throws IOException コネクションの確立に失敗、または読み込みの失敗。
 	 * @throws ParseException JSON のパースに失敗。
 	 */
-	public List<Hitokoto> getFriendTimelie() throws IOException, ParseException
+	public List<FriendHitokoto> getFriendTimelie() throws IOException, ParseException
 	{
-		List<Hitokoto> hitokotos = new ArrayList<Hitokoto>();
+		List<FriendHitokoto> hitokotos = new ArrayList<FriendHitokoto>();
 		URLConnection c = createURLConnection( "GET", "/statuses/friends_timeline.json" );
 		BufferedReader r = new BufferedReader( new InputStreamReader( c.getInputStream(), "UTF-8" ) );
 		JSONArray jhs; // Json Hitokotos
@@ -128,7 +128,7 @@ public class Wajavassr
 			JSONObject user = (JSONObject)jh.get( "user" );
 			Object[] favorites = ( (JSONArray)jh.get( "favorites" ) ).toArray();
 			hitokotos.add(
-					new Hitokoto(
+					new FriendHitokoto(
 							(String)jh.get( "html" ),
 							(String)jh.get( "text" ),
 							(String)jh.get( "id" ),
