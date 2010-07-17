@@ -314,11 +314,16 @@ public class Wajavassr {
                             (String)jh.get( "html" ),
                             (String)jh.get( "text" ),
 <<<<<<< HEAD
+<<<<<<< HEAD
                             (String)jh.get("rid"),
                             Long.parseLong((String)jh.get( "id" )),
 =======
                             (String)jh.get( "id" ),
 >>>>>>> e245420... 諸々更新
+=======
+                            (String)jh.get("rid"),
+                            (Long)jh.get( "id" ),
+>>>>>>> 6964cbf... rid と id の意味を取り違えていたので訂正
                             (String)jh.get( "link" ),
                             (String)jh.get( "user_login_id" ),
                             (String)user.get( "screen_name" ),
@@ -328,7 +333,6 @@ public class Wajavassr {
                             (String)jh.get( "photo_thombnail_url" ),
                             Arrays.copyOf( favorites, favorites.length, String[].class ),
                             (String)jh.get( "reply_message" ),
-                            (String)jh.get("rid"),
                             (String)jh.get( "reply_status_url" ),
                             (String)jh.get( "reply_user_login_id" ),
                             (String)jh.get( "reply_user_nick" ),
