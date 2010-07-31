@@ -45,6 +45,7 @@
   "rid": <文字列>, // このヒトコトのRID
   "user": {
     "login_id": <文字列>, // ユーザID
+<<<<<<< HEAD
     "nick": <文字列>, // ユーザ名
     "profimg_last_updated_at": <数値>, // プロフィール画像最終更新日時
     "profile_image_url": <文字列> // プロフィール画像のURL
@@ -123,26 +124,29 @@
   "user": {
     "profimg_last_updated_at": <数値>, // プロフィール画像最終更新日時
     "profile_image_url": <文字列>, // プロフィール画像のURL
+=======
+>>>>>>> 6252991... ChannelHitokoto の追加とそれに付随する変更
     "nick": <文字列>, // ユーザ名
-    "login_id": <文字列> // ユーザID
+    "profimg_last_updated_at": <数値>, // プロフィール画像最終更新日時
+    "profile_image_url": <文字列> // プロフィール画像のURL
   },
-  "favorites": [ // イイネした人のユーザID
-   <文字列>
-  ],
   "channel": {
     "title": <文字列>, // チャンネル名
     "name_en": <文字列>, // チャンネルID
     "onmitsu_fg": <文字列> // 隠密モード（0 or 1?）
   },
   "photo_url": <文字列>, // 添付画像のURL
+  "favorites": [ // イイネした人のユーザID
+   <文字列>
+  ],
   "reply": {
-    "body": <文字列>, // リプライ先ヒトコトの本文（text版）
     "html": <文字列>, // リプライ先ヒトコトの本文（HTML版）
+    "body": <文字列>, // リプライ先ヒトコトの本文（text版）
     "user": {
-      "profimg_last_updated_at": <数値>, // リプライ先ヒトコトの投稿者のプロフィール画像最終更新日時（エポック）（秒）?
-      "profile_image_url": <文字列>, // リプライ先ヒトコトの投稿者のプロフィール画像のURL
+      "login_id": <文字列>, // リプライ先ヒトコトの投稿者のユーザID
       "nick": <文字列>, // リプライ先ヒトコトの投稿者のユーザ名
-      "login_id": <文字列> // リプライ先ヒトコトの投稿者のユーザID
+      "profimg_last_updated_at": <数値>, // リプライ先ヒトコトの投稿者のプロフィール画像最終更新日時（エポック）（秒）?
+      "profile_image_url": <文字列> // リプライ先ヒトコトの投稿者のプロフィール画像のURL
     },
     "url": <文字列> // リプライ先ヒトコトのURL
   },
