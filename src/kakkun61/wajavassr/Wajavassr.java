@@ -135,7 +135,7 @@ public class Wajavassr {
                             (String)jh.get( "html" ),
                             (String)jh.get( "text" ),
                             (String)jh.get("rid"),
-                            (Long)jh.get( "id" ),
+                            Long.parseLong((String)jh.get( "id" )),
                             (String)jh.get( "link" ),
                             (String)jh.get( "user_login_id" ),
                             (String)user.get( "screen_name" ),

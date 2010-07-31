@@ -1,201 +1,189 @@
 package kakkun61.wajavassr;
 
-public class Hitokoto
-{
-	/** HTML版ヒトコト */
-	private String html;
+public class FriendHitokoto {
+    /** HTML版ヒトコト */
+    private String html;
 
-	/** text版ヒトコト */
-	private String text;
+    /** text版ヒトコト */
+    private String text;
 
-	/** このヒトコトのID */
-	private String id;
+    /** このヒトコトのRID */
+    private String rid;
 
-	/** このヒトコトのURL つまり、http://wassr.jp/user/{@linkplain #userLoginId}/statuses/{@linkplain #id} */
-	private String link;
+    /** このヒトコトのID */
+    private long id;
 
-	/** ログイン名 */
-	private String userLoginId;
+    /**
+     * このヒトコトのURL つまり、http://wassr.jp/user/{@linkplain #userLoginId}/statuses/
+     * {@linkplain #id}
+     */
+    private String link;
 
-	/** ニックネーム */
-	private String userScreenName;
+    /** ログイン名 */
+    private String userLoginId;
 
-	/** ユーザ画像のURL */
-	private String userProfileImageUrl;
+    /** ニックネーム */
+    private String userScreenName;
 
-	/** 友達のみに公開かどうか */
-	private boolean userProtected;
+    /** ユーザ画像のURL */
+    private String userProfileImageUrl;
 
-	/** 画像のURL */
-	private String photoUrl;
+    /** 友達のみに公開かどうか */
+    private boolean userProtected;
 
-	/** 画像のサムネイルのURL */
-	private String photoThombnailUrl;
+    /** 画像のURL */
+    private String photoUrl;
 
-	/** イイネした人のログイン名 */
-	private String[] favorites;
+    /** 画像のサムネイルのURL */
+    private String photoThombnailUrl;
 
-	/** リプライ先ヒトコト（text版） */
-	private String replyMessage;
+    /** イイネした人のログイン名 */
+    private String[] favorites;
 
-	/** リプライ先ヒトコトのURL */
-	private String replyStatusUrl;
+    /** リプライ先ヒトコト（text版） */
+    private String replyMessage;
 
-	/** リプライ先ヒトコトの投稿者のログイン名 */
-	private String replyUserLoginId;
+    /** リプライ先ヒトコトのURL */
+    private String replyStatusUrl;
 
-	/** リプライ先ヒトコトの投稿者のニックネーム */
-	private String replyUserNick;
+    /** リプライ先ヒトコトの投稿者のログイン名 */
+    private String replyUserLoginId;
 
-	/** 位置情報の名前? */
-	private String areaname;
+    /** リプライ先ヒトコトの投稿者のニックネーム */
+    private String replyUserNick;
 
-	/** 位置情報のコード? */
-	private String areacode;
+    /** 位置情報の名前? */
+    private String areaname;
 
-	/** エポック（秒） */
-	long epoch;
+    /** 位置情報のコード? */
+    private String areacode;
 
-	/** Second Life URL? */
-	private String slurl;
+    /** エポック（秒） */
+    long epoch;
 
-	public Hitokoto( String html,
-	                 String text,
-	                 String id,
-	                 String link,
-	                 String userLoginId,
-	                 String userScreenName,
-	                 String userProfileImageUrl,
-	                 boolean userProtected,
-	                 String photoUrl,
-	                 String photoThombnailUrl,
-	                 String[] favorites,
-	                 String replyMessage,
-	                 String replyStatusUrl,
-	                 String replyUserLoginId,
-	                 String replyUserNick,
-	                 String areaname,
-	                 String areacode,
-	                 long epoch,
-	                 String slurl )
-	{
-		super();
-		this.html = html;
-		this.text = text;
-		this.id = id;
-		this.link = link;
-		this.userLoginId = userLoginId;
-		this.userScreenName = userScreenName;
-		this.userProfileImageUrl = userProfileImageUrl;
-		this.userProtected = userProtected;
-		this.photoUrl = photoUrl;
-		this.photoThombnailUrl = photoThombnailUrl;
-		this.favorites = favorites;
-		this.replyMessage = replyMessage;
-		this.replyStatusUrl = replyStatusUrl;
-		this.replyUserLoginId = replyUserLoginId;
-		this.replyUserNick = replyUserNick;
-		this.areaname = areaname;
-		this.areacode = areacode;
-		this.epoch = epoch;
-		this.slurl = slurl;
-	}
+    /** Second Life URL? */
+    private String slurl;
 
-	public String getHtml()
-	{
-		return html;
-	}
+    public FriendHitokoto( String html,
+                     String text,
+                     String rid,
+                     long id,
+                     String link,
+                     String userLoginId,
+                     String userScreenName,
+                     String userProfileImageUrl,
+                     boolean userProtected,
+                     String photoUrl,
+                     String photoThombnailUrl,
+                     String[] favorites,
+                     String replyMessage,
+                     String replyStatusUrl,
+                     String replyUserLoginId,
+                     String replyUserNick,
+                     String areaname,
+                     String areacode,
+                     long epoch,
+ String slurl) {
+        super();
+        this.html = html;
+        this.text = text;
+        this.rid = rid;
+        this.id = id;
+        this.link = link;
+        this.userLoginId = userLoginId;
+        this.userScreenName = userScreenName;
+        this.userProfileImageUrl = userProfileImageUrl;
+        this.userProtected = userProtected;
+        this.photoUrl = photoUrl;
+        this.photoThombnailUrl = photoThombnailUrl;
+        this.favorites = favorites;
+        this.replyMessage = replyMessage;
+        this.replyStatusUrl = replyStatusUrl;
+        this.replyUserLoginId = replyUserLoginId;
+        this.replyUserNick = replyUserNick;
+        this.areaname = areaname;
+        this.areacode = areacode;
+        this.epoch = epoch;
+        this.slurl = slurl;
+    }
 
-	public String getText()
-	{
-		return text;
-	}
+    public String getHtml() {
+        return html;
+    }
 
-	public String getId()
-	{
-		return id;
-	}
+    public String getText() {
+        return text;
+    }
 
-	public String getLink()
-	{
-		return link;
-	}
+    public String getRid() {
+        return rid;
+    }
 
-	public String getUserLoginId()
-	{
-		return userLoginId;
-	}
+    public long getId() {
+        return id;
+    }
 
-	public String getUserScreenName()
-	{
-		return userScreenName;
-	}
+    public String getLink() {
+        return link;
+    }
 
-	public String getUserProfileImageUrl()
-	{
-		return userProfileImageUrl;
-	}
+    public String getUserLoginId() {
+        return userLoginId;
+    }
 
-	public boolean getUserProtected()
-	{
-		return userProtected;
-	}
+    public String getUserScreenName() {
+        return userScreenName;
+    }
 
-	public String getPhotoUrl()
-	{
-		return photoUrl;
-	}
+    public String getUserProfileImageUrl() {
+        return userProfileImageUrl;
+    }
 
-	public String getPhotoThombnailUrl()
-	{
-		return photoThombnailUrl;
-	}
+    public boolean getUserProtected() {
+        return userProtected;
+    }
 
-	public String[] getFavorites()
-	{
-		return favorites;
-	}
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
 
-	public String getReplyMessage()
-	{
-		return replyMessage;
-	}
+    public String getPhotoThombnailUrl() {
+        return photoThombnailUrl;
+    }
 
-	public String getReplyStatusUrl()
-	{
-		return replyStatusUrl;
-	}
+    public String[] getFavorites() {
+        return favorites;
+    }
 
-	public String getReplyUserLoginId()
-	{
-		return replyUserLoginId;
-	}
+    public String getReplyMessage() {
+        return replyMessage;
+    }
 
-	public String getReplyUserNick()
-	{
-		return replyUserNick;
-	}
+    public String getReplyStatusUrl() {
+        return replyStatusUrl;
+    }
 
-	public String getAreaname()
-	{
-		return areaname;
-	}
+    public String getReplyUserLoginId() {
+        return replyUserLoginId;
+    }
 
-	public String getAreacode()
-	{
-		return areacode;
-	}
+    public String getReplyUserNick() {
+        return replyUserNick;
+    }
 
-	public long getEpoch()
-	{
-		return epoch;
-	}
+    public String getAreaname() {
+        return areaname;
+    }
 
-	public String getSlurl()
-	{
-		return slurl;
-	}
+    public String getAreacode() {
+        return areacode;
+    }
 
+    public long getEpoch() {
+        return epoch;
+    }
 
-
+    public String getSlurl() {
+        return slurl;
+    }
 }
