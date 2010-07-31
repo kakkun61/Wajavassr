@@ -451,8 +451,12 @@ public class Wajavassr {
 >>>>>>> 363f85f... 諸々更新
 =======
                             (String)jh.get("rid"),
+<<<<<<< HEAD
                             (Long)jh.get( "id" ),
 >>>>>>> 184e0c0... rid と id の意味を取り違えていたので訂正
+=======
+                            Long.parseLong((String)jh.get( "id" )),
+>>>>>>> f2c540f... 失った過去を取り戻す。
                             (String)jh.get( "link" ),
                             (String)jh.get( "user_login_id" ),
                             (String)user.get( "screen_name" ),
