@@ -1,1 +1,6 @@
 Wassr 用 Java クライアントライブラリ
+
+■必要ライブラリ
+Commons Codec of Apach Commons (http://commons.apache.org/codec/)
+JSON.simple (http://code.google.com/p/json-simple/)
+
