@@ -6,11 +6,17 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Hex;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -156,5 +162,22 @@ public class Wajavassr {
             );
         }
         return hitokotos;
+    }
+
+    /**
+     * 
+     * @param appKey アプリケーションキー
+     * @param secretKey 秘密鍵
+     * @return 認証用 URL の文字列
+     * @throws NoSuchAlgorithmException 指定したアルゴリズムの MacSpi 実装をサポートするプロバイダが存在しない場合（{@link javax.crypto.Mac.getInstance(String)} による例外）
+     * @throws InvalidKeyException 指定された鍵がこの MAC の初期化に不適切な場合（{@link javax.crypto.Mac.init(Key)} による例外）
+     */
+    public static String createAuthUrl(String appKey, String secretKey) throws NoSuchAlgorithmException, InvalidKeyException {
+        SecretKeySpec sk = new SecretKeySpec( secretKey.getBytes(), "HmacSHA1" );
+        Mac mac = Mac.getInstance( "HmacSHA1" );
+        mac.init( sk );
+        byte[] result = mac.doFinal( ( "app_key" + appKey ).getBytes() );
+        String sig = new String( Hex.encodeHex( result ) );
+        return "http://wassr.jp/auth/?app_key=" + appKey +  "&sig=" + sig;
     }
 }
