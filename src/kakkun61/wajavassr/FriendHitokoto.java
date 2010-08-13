@@ -1,43 +1,40 @@
 package kakkun61.wajavassr;
 
 public class FriendHitokoto {
-    /** HTML版ヒトコト */
+    /** 本文（HTML版） */
     private String html;
 
-    /** text版ヒトコト */
+    /** 本文（text版） */
     private String text;
 
-    /** このヒトコトのRID */
+    /** このヒトコトのRID（連番） */
     private String rid;
 
     /** このヒトコトのID */
     private long id;
 
-    /**
-     * このヒトコトのURL つまり、http://wassr.jp/user/{@linkplain #userLoginId}/statuses/
-     * {@linkplain #id}
-     */
+    /** このヒトコトのURL つまり、http://wassr.jp/user/{@linkplain #userLoginId}/statuses/{@linkplain #rid} */
     private String link;
 
-    /** ログイン名 */
+    /** ユーザID */
     private String userLoginId;
 
-    /** ニックネーム */
+    /** ユーザ名 */
     private String userScreenName;
 
-    /** ユーザ画像のURL */
+    /** プロフィール画像のURL */
     private String userProfileImageUrl;
 
     /** 友達のみに公開かどうか */
     private boolean userProtected;
 
-    /** 画像のURL */
+    /** 添付画像のURL */
     private String photoUrl;
 
-    /** 画像のサムネイルのURL */
+    /** 添付画像のサムネイルのURL */
     private String photoThombnailUrl;
 
-    /** イイネした人のログイン名 */
+    /** イイネした人のユーザID */
     private String[] favorites;
 
     /** リプライ先ヒトコト（text版） */
@@ -49,7 +46,7 @@ public class FriendHitokoto {
     /** リプライ先ヒトコトの投稿者のログイン名 */
     private String replyUserLoginId;
 
-    /** リプライ先ヒトコトの投稿者のニックネーム */
+    /** リプライ先ヒトコトの投稿者のユーザ名 */
     private String replyUserNick;
 
     /** 位置情報の名前? */
