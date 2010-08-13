@@ -3,6 +3,7 @@ package kakkun61.wajavassr;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -106,31 +107,48 @@ public class Wajavassr {
     /**
      * 自分への返信を得る。
      * 
-     * @return
+     * @param page 何頁目を読み込むか。正数。
+     * @return 得られたヒトコトをパースした {@link java.util.List List}{@code <}{@link FriendHitokoto}{@code >}。
      * @throws IOException
      * @throws ParseException
      */
     public List<FriendHitokoto> getReplies(int page) throws IOException, ParseException {
-        if(0 < page)
+        if(page <= 0)
             throw new IllegalArgumentException("引数 page は正でないといけません。: " + page);
         return getFriendHitokotos("/statuses/replies.json", new String[][]{{"page", String.valueOf(page)}}, true);
     }
 
     /**
+     * 友達タイムラインを得る。普通、単に「タイムライン」と呼ばれるもの。
      * 
-     * @param page 何頁目を読み込むか。自然数。
-     * @return
+     * @param page 何頁目を読み込むか。正数。
+     * @return 得られたヒトコトをパースした {@link java.util.List List}{@code <}{@link FriendHitokoto}{@code >}。
      * @throws IOException 読み込みに失敗。
      * @throws ParseException パースに失敗。{@link org.json.simple.parser.JSONParser#parse(java.io.Reader)} による例外。
      */
     public List<FriendHitokoto> getFriendTimeline(int page) throws IOException, ParseException {
-        if(0 < page)
-            throw new IllegalArgumentException("引数 page は自然数でないといけません。: " + page);
+        if(page <= 0)
+            throw new IllegalArgumentException("引数 page は正でないといけません。: " + page);
         return getFriendHitokotos("/statuses/friends_timeline.json", new String[][]{{"page", String.valueOf(page)}}, true);
     }
 
     /**
+     * ユーザタイムラインを得る。
+     * 
+     * @param page 何頁目を読み込むか。正数。
+     * @return 得られたヒトコトをパースした {@link java.util.List List}{@code <}{@link FriendHitokoto}{@code >}。
+     * @throws IOException 読み込みに失敗。
+     * @throws ParseException パースに失敗。{@link org.json.simple.parser.JSONParser#parse(java.io.Reader)} による例外。
+     */
+    public List<FriendHitokoto> getUserTimeline(int page, String id) throws IOException, ParseException {
+        if(page <= 0)
+            throw new IllegalArgumentException("引数 page は正でないといけません。: " + page);
+        return getFriendHitokotos("/statuses/user_timeline.json", new String[][]{{"page", String.valueOf(page)}, {"id", id}}, false);
+    }
+
+    /**
      * 友達ヒトコト形式で得られるタイムライン用の取得メソッド。
+     * 
      * @param path ルート以下のパス。“http://api.wassr.jp/statuses/friends_timeline.json” の場合、“/statuses/friends_timeline.json”。{@link #createURLConnection(String, String, boolean)} の第2引数へ渡される。
      * @param params URL に付加するパラメータ。n×2 の2次元配列。“new String[][]{{"page", "2"}, {"id", "xxx"}}” を渡した場合、{@code path} パラメータの後ろに、“?page=2&id=xxx” が付加される。パラメータなしの場合は {@code null}。URL エンコード（Percent-Encoding）は実装していない。
      * @param authorization 認証が必要かどうか。必要なら、{@code true}。
@@ -138,8 +156,11 @@ public class Wajavassr {
      * @throws IOException 読み込みに失敗。
      * @throws ParseException パースに失敗。{@link org.json.simple.parser.JSONParser#parse(java.io.Reader)} による例外。
      */
-    private List<FriendHitokoto> getFriendHitokotos(String path, String[][] params, boolean authorization) throws IOException, ParseException {
-        List<FriendHitokoto> hitokotos = new ArrayList<FriendHitokoto>(20);
+    protected List<FriendHitokoto> getFriendHitokotos(String path, String[][] params, boolean authorization) throws IOException, ParseException {
+        return parseJsonFriendHitokoto(createConnectedReader(path, params, authorization));
+    }
+
+    protected Reader createConnectedReader(String path, String[][] params, boolean authorization) throws IOException {
         if(params != null) {
             StringBuilder sb = new StringBuilder(path + "?");
             for(int i=0; i<params.length; i++) {
@@ -152,13 +173,17 @@ public class Wajavassr {
             path = sb.toString();
         }
         URLConnection c = createURLConnection("GET", path, authorization);
-        BufferedReader r = new BufferedReader(new InputStreamReader(c.getInputStream(), "UTF-8"));
+        return new BufferedReader(new InputStreamReader(c.getInputStream(), "UTF-8"));
+    }
+
+    protected List<FriendHitokoto> parseJsonFriendHitokoto(Reader r) throws IOException, ParseException {
         JSONArray jhs; // Json Hitokotos
         try {
             jhs = (JSONArray) parser.parse(r);
         } finally {
             r.close();
         }
+        List<FriendHitokoto> hitokotos = new ArrayList<FriendHitokoto>(20);
         for (Object o : jhs) {
             JSONObject jh = (JSONObject) o;
             JSONObject user = (JSONObject) jh.get("user");
