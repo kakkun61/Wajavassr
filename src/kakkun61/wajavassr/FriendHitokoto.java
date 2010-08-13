@@ -61,26 +61,27 @@ public class FriendHitokoto {
     /** Second Life URL? */
     private String slurl;
 
-    public FriendHitokoto( String html,
-                     String text,
-                     String rid,
-                     long id,
-                     String link,
-                     String userLoginId,
-                     String userScreenName,
-                     String userProfileImageUrl,
-                     boolean userProtected,
-                     String photoUrl,
-                     String photoThombnailUrl,
-                     String[] favorites,
-                     String replyMessage,
-                     String replyStatusUrl,
-                     String replyUserLoginId,
-                     String replyUserNick,
-                     String areaname,
-                     String areacode,
-                     long epoch,
- String slurl) {
+    public FriendHitokoto(
+            String html,
+            String text,
+            String rid,
+            long id,
+            String link,
+            String userLoginId,
+            String userScreenName,
+            String userProfileImageUrl,
+            boolean userProtected,
+            String photoUrl,
+            String photoThombnailUrl,
+            String[] favorites,
+            String replyMessage,
+            String replyStatusUrl,
+            String replyUserLoginId,
+            String replyUserNick,
+            String areaname,
+            String areacode,
+            long epoch,
+            String slurl) {
         super();
         this.html = html;
         this.text = text;
