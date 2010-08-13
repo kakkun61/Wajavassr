@@ -165,7 +165,7 @@ public class Wajavassr {
     }
 
     /**
-     * 
+     * Wassr の認証用 URL 文字列の生成。
      * @param appKey アプリケーションキー
      * @param secretKey 秘密鍵
      * @return 認証用 URL の文字列
