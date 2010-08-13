@@ -14,7 +14,7 @@
    "protected":<真偽値> // 友達のみに公開かどうか
   }
   "photo_url":<文字列>, // 添付画像のURL
-  "photo_thumbnail_url":<文字列>, // 画像のサムネイルのURL
+  "photo_thumbnail_url":<文字列>, // 添付画像のサムネイルのURL
   "favorites":[ // イイネした人のユーザID
    <文字列>
   ],
