@@ -57,17 +57,6 @@ public class Wajavassr {
     }
 
     /**
-     * 認証文字列の作成
-     * 
-     * @param user ログイン名
-     * @param password パスワード or 認証トークン
-     * @return authentication 認証文字列
-     */
-    protected static String createAuthentication(String user, String password) {
-        return new String(Base64.encodeBase64((user + ":" + password).getBytes()));
-    }
-
-    /**
      * User Agent を得る。
      * 
      * @return
@@ -161,7 +150,29 @@ public class Wajavassr {
         return parseJsonFriendHitokoto(createConnectedReader(path, params, authorization));
     }
 
+    /**
+     * データ取得用リーダを作る。
+     * 
+     * @param path
+     * @param params
+     * @param authorization
+     * @return
+     * @throws IOException
+     */
     protected Reader createConnectedReader(String path, String[][] params, boolean authorization) throws IOException {
+        path = makePath(path, params);
+        URLConnection c = createURLConnection("GET", path, authorization);
+        return new BufferedReader(new InputStreamReader(c.getInputStream(), "UTF-8"));
+    }
+
+    /**
+     * パラメータを文字列にし、パスを作る。
+     * 
+     * @param path
+     * @param params
+     * @return
+     */
+    protected String makePath(String path, String[][] params) {
         if(params != null) {
             StringBuilder sb = new StringBuilder(path + "?");
             for(int i=0; i<params.length; i++) {
@@ -173,12 +184,30 @@ public class Wajavassr {
             }
             path = sb.toString();
         }
-        URLConnection c = createURLConnection("GET", path, authorization);
-        return new BufferedReader(new InputStreamReader(c.getInputStream(), "UTF-8"));
+        return path;
     }
 
+    /**
+     * 認証文字列の作成
+     * 
+     * @param user ログイン名
+     * @param password パスワード or 認証トークン
+     * @return authentication 認証文字列
+     */
+    protected static String createAuthentication(String user, String password) {
+        return new String(Base64.encodeBase64((user + ":" + password).getBytes()));
+    }
+
+    /**
+     * JSON を読み出すリーダから {@link java.util.List List}{@code <}{@link FriendHitokoto}{@code >} を作る。
+     * 
+     * @param r
+     * @return
+     * @throws IOException
+     * @throws ParseException
+     */
     protected List<FriendHitokoto> parseJsonFriendHitokoto(Reader r) throws IOException, ParseException {
-        JSONArray jhs; // Json Hitokotos
+        JSONArray jhs; // Json HitokotoS の略
         try {
             jhs = (JSONArray) parser.parse(r);
         } finally {
