@@ -147,6 +147,7 @@ public class Wajavassr {
      * @throws ParseException パースに失敗。{@link org.json.simple.parser.JSONParser#parse(java.io.Reader)} による例外。
      */
     protected List<FriendHitokoto> getFriendHitokotos(String path, String id, int page, boolean authorization) throws IOException, ParseException {
+        // TODO 多ページ対応にする。
         return parseJsonFriendHitokoto(createConnectedReader(path, id, page, authorization));
     }
 
