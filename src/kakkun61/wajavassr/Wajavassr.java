@@ -104,7 +104,7 @@ public class Wajavassr {
     public List<FriendHitokoto> getReplies(int page) throws IOException, ParseException {
         if(page <= 0)
             throw new IllegalArgumentException("引数 page は正でないといけません。: " + page);
-        return getFriendHitokotos("/statuses/replies.json", new String[][]{{"page", String.valueOf(page)}}, true);
+        return getFriendHitokotos("/statuses/replies.json", null, page, true);
     }
 
     /**
@@ -118,7 +118,7 @@ public class Wajavassr {
     public List<FriendHitokoto> getFriendTimeline(int page) throws IOException, ParseException {
         if(page <= 0)
             throw new IllegalArgumentException("引数 page は正でないといけません。: " + page);
-        return getFriendHitokotos("/statuses/friends_timeline.json", new String[][]{{"page", String.valueOf(page)}}, true);
+        return getFriendHitokotos("/statuses/friends_timeline.json", null, page, true);
     }
 
     /**
@@ -129,11 +129,11 @@ public class Wajavassr {
      * @throws IOException 読み込みに失敗。
      * @throws ParseException パースに失敗。{@link org.json.simple.parser.JSONParser#parse(java.io.Reader)} による例外。
      */
-    public List<FriendHitokoto> getUserTimeline(int page, String id) throws IOException, ParseException {
+    public List<FriendHitokoto> getUserTimeline(String id, int page) throws IOException, ParseException {
         if(page <= 0)
             throw new IllegalArgumentException("引数 page は正でないといけません。: " + page);
         // 購読関係にあっても、鍵っ子のヒトコトは読めないので、認証は false。
-        return getFriendHitokotos("/statuses/user_timeline.json", new String[][]{{"page", String.valueOf(page)}, {"id", id}}, false);
+        return getFriendHitokotos("/statuses/user_timeline.json", id, page, false);
     }
 
     /**
@@ -146,46 +146,50 @@ public class Wajavassr {
      * @throws IOException 読み込みに失敗。
      * @throws ParseException パースに失敗。{@link org.json.simple.parser.JSONParser#parse(java.io.Reader)} による例外。
      */
-    protected List<FriendHitokoto> getFriendHitokotos(String path, String[][] params, boolean authorization) throws IOException, ParseException {
-        return parseJsonFriendHitokoto(createConnectedReader(path, params, authorization));
+    protected List<FriendHitokoto> getFriendHitokotos(String path, String id, int page, boolean authorization) throws IOException, ParseException {
+        return parseJsonFriendHitokoto(createConnectedReader(path, id, page, authorization));
     }
 
     /**
      * データ取得用リーダを作る。
      * 
      * @param path
-     * @param params
+     * @param id
+     * @param page
      * @param authorization
      * @return
      * @throws IOException
      */
-    protected Reader createConnectedReader(String path, String[][] params, boolean authorization) throws IOException {
-        path = makePath(path, params);
+    protected Reader createConnectedReader(String path, String id, int page, boolean authorization) throws IOException {
+        StringBuilder sb = new StringBuilder(path + "?page=" + page);
+        if(id != null)
+            sb.append("&id=" + id);
+//        path = makePath(path, params);
         URLConnection c = createURLConnection("GET", path, authorization);
         return new BufferedReader(new InputStreamReader(c.getInputStream(), "UTF-8"));
     }
 
-    /**
-     * パラメータを文字列にし、パスを作る。
-     * 
-     * @param path
-     * @param params
-     * @return
-     */
-    protected String makePath(String path, String[][] params) {
-        if(params != null) {
-            StringBuilder sb = new StringBuilder(path + "?");
-            for(int i=0; i<params.length; i++) {
-                if(params[i].length != 2)
-                    throw new IllegalArgumentException("第2引数 params は、n×2 の2次元配列でないといけません。: " + Arrays.deepToString(params));
-                if(i != 0)
-                    sb.append("&");
-                sb.append(params[i][0] + "=" + params[i][1]);
-            }
-            path = sb.toString();
-        }
-        return path;
-    }
+//    /**
+//     * パラメータを文字列にし、パスを作る。
+//     * 
+//     * @param path
+//     * @param params
+//     * @return
+//     */
+//    protected String makePath(String path, String[][] params) {
+//        if(params != null) {
+//            StringBuilder sb = new StringBuilder(path + "?");
+//            for(int i=0; i<params.length; i++) {
+//                if(params[i].length != 2)
+//                    throw new IllegalArgumentException("第2引数 params は、n×2 の2次元配列でないといけません。: " + Arrays.deepToString(params));
+//                if(i != 0)
+//                    sb.append("&");
+//                sb.append(params[i][0] + "=" + params[i][1]);
+//            }
+//            path = sb.toString();
+//        }
+//        return path;
+//    }
 
     /**
      * 認証文字列の作成
