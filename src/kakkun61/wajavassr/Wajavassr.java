@@ -143,6 +143,7 @@ public class Wajavassr {
     public List<FriendHitokoto> getUserTimeline(int page, String id) throws IOException, ParseException {
         if(page <= 0)
             throw new IllegalArgumentException("引数 page は正でないといけません。: " + page);
+        // 購読関係にあっても、鍵っ子のヒトコトは読めないので、認証は false。
         return getFriendHitokotos("/statuses/user_timeline.json", new String[][]{{"page", String.valueOf(page)}, {"id", id}}, false);
     }
 
