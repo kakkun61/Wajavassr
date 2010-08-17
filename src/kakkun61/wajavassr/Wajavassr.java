@@ -31,7 +31,7 @@ public class Wajavassr {
     protected final JSONParser parser = new JSONParser();
 
     /**
-     * クライアントを作る。後で必ず {@link #setUser(String, String)} を呼び出すこと。
+     * クライアントを作る。認証が必要な時は、先に必ず {@link #setUser(String, String)} を呼び出すこと。
      */
     public Wajavassr() {
     }
@@ -101,7 +101,7 @@ public class Wajavassr {
      * @param toPage 読み込むページの下端点。（これを含まない）
      * @return 得られたヒトコトをパースした {@link java.util.List List}{@code <}{@link FriendHitokoto}{@code >}。
      * @throws IOException 読み込みに失敗。
-     * @throws ParseException パースに失敗。{@link org.json.simple.parser.JSONParser#parse(java.io.Reader)} による例外。
+     * @throws ParseException パースに失敗。{@link org.json.simple.parser.JSONParser#parse(java.io.Reader)} による例外。指定したユーザが存在しない場合もこれが投げられる。
      */
     public List<FriendHitokoto> getFriendTimeline(int fromPage, int toPage) throws IOException, ParseException {
         if(fromPage <= 0)
@@ -114,40 +114,40 @@ public class Wajavassr {
     }
 
     /**
-     * ユーザタイムラインを得る。{@code fromPage} から {@code toPage}-1 までのページを読み込む。
+     * ユーザタイムラインを得る。
      * 
-     * @param id ユーザID。指定しない時は {@code null}。
-     * @param fromPage 読み込むページの上端点。
-     * @param toPage 読み込むページの下端点。（これを含まない）
+     * @param id ユーザID。
      * @return 得られたヒトコトをパースした {@link java.util.List List}{@code <}{@link FriendHitokoto}{@code >}。
      * @throws IOException 読み込みに失敗。
      * @throws ParseException パースに失敗。{@link org.json.simple.parser.JSONParser#parse(java.io.Reader)} による例外。
      */
-    public List<FriendHitokoto> getUserTimeline(String id, int fromPage, int toPage) throws IOException, ParseException {
-        if(fromPage <= 0)
-            throw new IllegalArgumentException("引数 fromPage は正でないといけません。: " + fromPage);
-        if(toPage <= 0)
-            throw new IllegalArgumentException("引数 toPage は正でないといけません。: " + toPage);
-        if(toPage <= fromPage)
-            throw new IllegalArgumentException("fromPage < toPage でないといけません。" + fromPage + " < " + toPage);
-        // 購読関係にあっても、鍵っ子のヒトコトは読めないので、認証は false。
-        return getFriendHitokotos("/statuses/user_timeline.json", id, fromPage, toPage, false);
+    public List<FriendHitokoto> getUserTimeline(String id) throws IOException, ParseException {
+        if(id == null)
+            throw new IllegalArgumentException("引数 id に null は指定できません。");
+        if(id.isEmpty())
+            throw new IllegalArgumentException("引数 id に空文字列は指定できません。");
+        // 購読関係にあっても、鍵っ子のヒトコトは読めないので、認証はしない。ページ指定をしては、有効ではないのでページ指定しない。
+        return getFriendHitokotos("/statuses/user_timeline.json", id, 0, 0, false);
     }
 
     /**
-     * 友達ヒトコト形式で得られるタイムライン用の取得メソッド。{@code fromPage} から {@code toPage}-1 までのページを読み込む。
+     * 友達ヒトコト形式で得られるタイムライン用の取得メソッド。{@code fromPage} から {@code toPage}-1 までのページを読み込む。ページの指定をしないときは、{@code fromPage}, {@code toPage} ともに {@code 0}。
      * 
-     * @param path ルート以下のパス。“http://api.wassr.jp/statuses/friends_timeline.json” の場合、“/statuses/friends_timeline.json”。{@link #createURLConnection(String, String, boolean)} の第2引数へ渡される。
+     * @param path ルート以下のパス。“http://api.wassr.jp/statuses/friends_timeline.json” の場合、“/statuses/friends_timeline.json”。
      * @param id ユーザID。指定しない時は {@code null}。
-     * @param fromPage 読み込むページの上端点。
-     * @param toPage 読み込むページの下端点。（これを含まない）
+     * @param fromPage 読み込むページの上端点。（非負)
+     * @param toPage 読み込むページの下端点。（これを含まない）（非負)
      * @param authorization 認証が必要かどうか。必要なら、{@code true}。
      * @return 得られたヒトコトをパースした {@link java.util.List List}{@code <}{@link FriendHitokoto}{@code >}。
      * @throws IOException 読み込みに失敗。
      * @throws ParseException パースに失敗。{@link org.json.simple.parser.JSONParser#parse(java.io.Reader)} による例外。
      */
     protected List<FriendHitokoto> getFriendHitokotos(String path, String id, int fromPage, int toPage, boolean authorization) throws IOException, ParseException {
-        List<FriendHitokoto> hitokotos = new ArrayList<FriendHitokoto>(20*(toPage-fromPage+1));
+        // ページ指定なし
+        if(fromPage == 0 && toPage == 0)
+            return parseJsonFriendHitokoto(createConnectedReader(path, id, 0, authorization));
+
+        List<FriendHitokoto> hitokotos = new ArrayList<FriendHitokoto>(20*(toPage-fromPage));
         for(int page=fromPage; page<toPage; page++) {
             List<FriendHitokoto> hs = parseJsonFriendHitokoto(createConnectedReader(path, id, page, authorization) );
             if(hs.size() == 0)
@@ -166,19 +166,26 @@ public class Wajavassr {
     /**
      * データ取得用リーダを作る。
      * 
-     * @param path
-     * @param id
-     * @param page
-     * @param authorization
-     * @return
-     * @throws IOException
+     * @param path path ルート以下のパス。“http://api.wassr.jp/statuses/friends_timeline.json” の場合、“/statuses/friends_timeline.json”。
+     * @param id id ユーザID。指定しない時は {@code null}。
+     * @param page 読み込むページ。指定しない時は {@code 0}。
+     * @param authorization authorization 認証が必要かどうか。必要なら、{@code true}。
+     * @return データ取得用リーダ。
+     * @throws IOException コネクションの確立または読み込みに失敗。
      */
     protected Reader createConnectedReader(String path, String id, int page, boolean authorization) throws IOException {
         if(id != null)
-            path = path + "?id=" + id + "&page=" + page;
-        else
-            path = path + "?page=" + page;
+        {
+            if(page != 0)
+                path = path + "?id=" + id + "&page=" + page;
+            else
+                path = path + "?id=" + id;
+        } else {
+            if(page != 0)
+                path = path + "?page=" + page;
+        }
         URLConnection c = createURLConnection("GET", path, authorization);
+        System.err.println("connect: " + path);
         return new BufferedReader(new InputStreamReader(c.getInputStream(), "UTF-8"));
     }
 
