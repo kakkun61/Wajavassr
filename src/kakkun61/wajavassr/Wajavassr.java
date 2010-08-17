@@ -24,11 +24,13 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 public class Wajavassr {
-    protected final String wassr = "http://api.wassr.jp";
-    protected String auth = null;
-    protected static final String DEFAULT_USER_AGENT = "Wajavassr/00.03";
-    protected String userAgent = DEFAULT_USER_AGENT;
-    protected final JSONParser parser = new JSONParser();
+    private final String wassr = "http://api.wassr.jp";
+    private String auth = null;
+    private static final String DEFAULT_USER_AGENT = "Wajavassr/00.01";
+    private String userAgent = DEFAULT_USER_AGENT;
+    private static final String DEFAULT_CLIENT_NAME = "Wajavassr";
+    private String clientName = DEFAULT_CLIENT_NAME;
+    private final JSONParser parser = new JSONParser();
 
     /**
      * クライアントを作る。認証が必要な時は、先に必ず {@link #setUser(String, String)} を呼び出すこと。
@@ -71,8 +73,29 @@ public class Wajavassr {
      * @param userAgent 新たに設定する User Agent。{@code null} の場合デフォルト値に設定。
      */
     public void setUserAgent(String userAgent) {
-        if (userAgent == null) this.userAgent = DEFAULT_USER_AGENT;
+        if (userAgent == null)
+            this.userAgent = DEFAULT_USER_AGENT;
         else this.userAgent = userAgent;
+    }
+
+    /**
+     * クライアント名（via ***）を得る。
+     * 
+     * @return
+     */
+    public String getClientName() {
+        return clientName;
+    }
+
+    /**
+     * クライアント名を設定する。クライアント名は、Wassr 上で via *** と表示されるもの。引数 {@code clentName} が {@code null} の場合デフォルト値に設定。
+     * 
+     * @param clientName
+     */
+    public void setClientName(String clientName) {
+        if (clientName == null)
+            this.clientName = DEFAULT_CLIENT_NAME;
+        this.clientName = clientName;
     }
 
     /**
@@ -85,11 +108,11 @@ public class Wajavassr {
      * @throws ParseException
      */
     public List<FriendHitokoto> getReplies(int fromPage, int toPage) throws IOException, ParseException {
-        if(fromPage <= 0)
+        if (fromPage <= 0)
             throw new IllegalArgumentException("引数 fromPage は正でないといけません。: " + fromPage);
-        if(toPage <= 0)
+        if (toPage <= 0)
             throw new IllegalArgumentException("引数 toPage は正でないといけません。: " + toPage);
-        if(toPage <= fromPage)
+        if (toPage <= fromPage)
             throw new IllegalArgumentException("fromPage < toPage でないといけません。" + fromPage + " < " + toPage);
         return getFriendHitokotos("/statuses/replies.json", null, fromPage, toPage, true);
     }
@@ -104,11 +127,11 @@ public class Wajavassr {
      * @throws ParseException パースに失敗。{@link org.json.simple.parser.JSONParser#parse(java.io.Reader)} による例外。指定したユーザが存在しない場合もこれが投げられる。
      */
     public List<FriendHitokoto> getFriendTimeline(int fromPage, int toPage) throws IOException, ParseException {
-        if(fromPage <= 0)
+        if (fromPage <= 0)
             throw new IllegalArgumentException("引数 fromPage は正でないといけません。: " + fromPage);
-        if(toPage <= 0)
+        if (toPage <= 0)
             throw new IllegalArgumentException("引数 toPage は正でないといけません。: " + toPage);
-        if(toPage <= fromPage)
+        if (toPage <= fromPage)
             throw new IllegalArgumentException("fromPage < toPage でないといけません。" + fromPage + " < " + toPage);
         return getFriendHitokotos("/statuses/friends_timeline.json", null, fromPage, toPage, true);
     }
@@ -122,9 +145,9 @@ public class Wajavassr {
      * @throws ParseException パースに失敗。{@link org.json.simple.parser.JSONParser#parse(java.io.Reader)} による例外。
      */
     public List<FriendHitokoto> getUserTimeline(String id) throws IOException, ParseException {
-        if(id == null)
+        if (id == null)
             throw new IllegalArgumentException("引数 id に null は指定できません。");
-        if(id.isEmpty())
+        if (id.isEmpty())
             throw new IllegalArgumentException("引数 id に空文字列は指定できません。");
         // 購読関係にあっても、鍵っ子のヒトコトは読めないので、認証はしない。ページ指定をしては、有効ではないのでページ指定しない。
         return getFriendHitokotos("/statuses/user_timeline.json", id, 0, 0, false);
@@ -144,18 +167,18 @@ public class Wajavassr {
      */
     protected List<FriendHitokoto> getFriendHitokotos(String path, String id, int fromPage, int toPage, boolean authorization) throws IOException, ParseException {
         // ページ指定なし
-        if(fromPage == 0 && toPage == 0)
+        if (fromPage == 0 && toPage == 0)
             return parseJsonFriendHitokoto(createConnectedReader(path, id, 0, authorization));
 
         List<FriendHitokoto> hitokotos = new ArrayList<FriendHitokoto>(20*(toPage-fromPage));
-        for(int page=fromPage; page<toPage; page++) {
+        for (int page=fromPage; page<toPage; page++) {
             List<FriendHitokoto> hs = parseJsonFriendHitokoto(createConnectedReader(path, id, page, authorization) );
             if(hs.size() == 0)
                 break;
             // ダブるヒトコトを省いて結合
             int i;
-            for(i=0; i<hitokotos.size(); i++) {
-                if(hitokotos.get(i).equals(hs.get(0)))
+            for (i=0; i<hitokotos.size(); i++) {
+                if (hitokotos.get(i).equals(hs.get(0)))
                     break;
             }
             hitokotos.addAll(hs.subList(hitokotos.size()-i, hs.size()));
@@ -174,14 +197,14 @@ public class Wajavassr {
      * @throws IOException コネクションの確立または読み込みに失敗。
      */
     protected Reader createConnectedReader(String path, String id, int page, boolean authorization) throws IOException {
-        if(id != null)
+        if (id != null)
         {
-            if(page != 0)
+            if (page != 0)
                 path = path + "?id=" + id + "&page=" + page;
             else
                 path = path + "?id=" + id;
         } else {
-            if(page != 0)
+            if (page != 0)
                 path = path + "?page=" + page;
         }
         URLConnection c = createURLConnection("GET", path, authorization);
