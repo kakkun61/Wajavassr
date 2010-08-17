@@ -184,4 +184,16 @@ public class ChannelHitokoto {
     public String getCreatedOn() {
         return createdOn;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null)
+            return false;
+        if(!(obj instanceof ChannelHitokoto))
+            return false;
+        ChannelHitokoto h = (ChannelHitokoto)obj;
+        if(getRid().equals(h.getRid()))
+            return true;
+        return false;
+    }
 }

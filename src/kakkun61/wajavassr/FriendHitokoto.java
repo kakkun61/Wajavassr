@@ -184,4 +184,16 @@ public class FriendHitokoto {
     public String getSlurl() {
         return slurl;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null)
+            return false;
+        if(!(obj instanceof FriendHitokoto))
+            return false;
+        FriendHitokoto h = (FriendHitokoto)obj;
+        if(getRid().equals(h.getRid()))
+            return true;
+        return false;
+    }
 }
