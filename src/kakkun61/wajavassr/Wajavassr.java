@@ -153,6 +153,11 @@ public class Wajavassr {
         return getFriendHitokotos("/statuses/user_timeline.json", id, 0, 0, false);
     }
 
+    public List<FriendHitokoto> getMyTimeline() throws IOException, ParseException {
+        // ユーザタイムラインで、ユーザIDを指定せず、認証をすれば、自分のヒトコトが得られる。
+        return getFriendHitokotos("/statuses/user_timeline.json", null, 0, 0, true);
+    }
+
     /**
      * 友達ヒトコト形式で得られるタイムライン用の取得メソッド。{@code fromPage} から {@code toPage}-1 までのページを読み込む。ページの指定をしないときは、{@code fromPage}, {@code toPage} ともに {@code 0}。
      * 
