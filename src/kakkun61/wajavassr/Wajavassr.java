@@ -124,7 +124,7 @@ public class Wajavassr {
      * @param toPage 読み込むページの下端点。（これを含まない）
      * @return 得られたヒトコトをパースした {@link java.util.List List}{@code <}{@link FriendHitokoto}{@code >}。
      * @throws IOException 読み込みに失敗。
-     * @throws ParseException パースに失敗。{@link org.json.simple.parser.JSONParser#parse(java.io.Reader)} による例外。指定したユーザが存在しない場合もこれが投げられる。
+     * @throws ParseException パースに失敗。{@link org.json.simple.parser.JSONParser#parse(java.io.Reader)} による例外。
      */
     public List<FriendHitokoto> getFriendTimeline(int fromPage, int toPage) throws IOException, ParseException {
         if (fromPage <= 0)
@@ -142,7 +142,7 @@ public class Wajavassr {
      * @param id ユーザID。
      * @return 得られたヒトコトをパースした {@link java.util.List List}{@code <}{@link FriendHitokoto}{@code >}。
      * @throws IOException 読み込みに失敗。
-     * @throws ParseException パースに失敗。{@link org.json.simple.parser.JSONParser#parse(java.io.Reader)} による例外。
+     * @throws ParseException パースに失敗。{@link org.json.simple.parser.JSONParser#parse(java.io.Reader)} による例外。指定したユーザが存在しない場合もこれが投げられる。
      */
     public List<FriendHitokoto> getUserTimeline(String id) throws IOException, ParseException {
         if (id == null)
@@ -207,8 +207,11 @@ public class Wajavassr {
             if (page != 0)
                 path = path + "?page=" + page;
         }
-        URLConnection c = createURLConnection("GET", path, authorization);
-        System.err.println("connect: " + path);
+        HttpURLConnection c = createHttpURLConnection("GET", path, authorization);
+        c.connect();
+        System.err.println("connect: " + path + " -> " + c.getResponseCode() + " " + c.getResponseMessage());
+        if(c.getResponseCode() != HttpURLConnection.HTTP_OK)
+            throw new IOException("Server returned HTTP response code: \"" + c.getResponseCode() + " " + c.getResponseMessage() + "\" for URL: " + c.getURL());
         return new BufferedReader(new InputStreamReader(c.getInputStream(), "UTF-8"));
     }
 
@@ -221,7 +224,7 @@ public class Wajavassr {
      * @return 確立したコネクション
      * @throws IOException コネクションの確立に失敗。
      */
-    protected URLConnection createURLConnection(String method, String path, boolean authorization) throws IOException {
+    protected HttpURLConnection createHttpURLConnection(String method, String path, boolean authorization) throws IOException {
         HttpURLConnection c = (HttpURLConnection) new URL(wassr + path).openConnection();
         c.setRequestMethod(method);
         c.setRequestProperty("User-Agent", userAgent);
