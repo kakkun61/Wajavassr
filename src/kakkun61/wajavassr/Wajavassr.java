@@ -203,13 +203,15 @@ public class Wajavassr implements Log {
         List<FriendHitokoto> hitokotos = new ArrayList<FriendHitokoto>(20*(toPage-fromPage));
         for (int page=fromPage; page<toPage; page++) {
             List<FriendHitokoto> hs = parseJsonFriendHitokoto(createConnectedReader(path, id, page, authorization) );
-            if(hs.size() == 0)
+            if (hs.size() == 0)
                 break;
             // ダブるヒトコトを省いて結合
-            int i;
-            for (i=0; i<hitokotos.size(); i++) {
-                if (hitokotos.get(i).equals(hs.get(0)))
+            FriendHitokoto h0 = hs.get(0);
+            int i=0;
+            for (FriendHitokoto h : hitokotos) {
+                if (h.equals(h0))
                     break;
+                i++;
             }
             hitokotos.addAll(hs.subList(hitokotos.size()-i, hs.size()));
         }
