@@ -1,12 +1,13 @@
 package kakkun61.wajavassr;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -238,28 +239,6 @@ public class Wajavassr {
         return c;
     }
 
-//    /**
-//     * パラメータを文字列にし、パスを作る。
-//     * 
-//     * @param path
-//     * @param params URL に付加するパラメータ。n×2 の2次元配列。“new String[][]{{"page", "2"}, {"id", "xxx"}}” を渡した場合、{@code path} パラメータの後ろに、“?page=2&id=xxx” が付加される。パラメータなしの場合は {@code null}。URL エンコード（Percent-Encoding）は実装していない。
-//     * @return
-//     */
-//    protected String makePath(String path, String[][] params) {
-//        if(params != null) {
-//            StringBuilder sb = new StringBuilder(path + "?");
-//            for(int i=0; i<params.length; i++) {
-//                if(params[i].length != 2)
-//                    throw new IllegalArgumentException("第2引数 params は、n×2 の2次元配列でないといけません。: " + Arrays.deepToString(params));
-//                if(i != 0)
-//                    sb.append("&");
-//                sb.append(params[i][0] + "=" + params[i][1]);
-//            }
-//            path = sb.toString();
-//        }
-//        return path;
-//    }
-
     /**
      * 認証文字列の作成
      * 
@@ -314,6 +293,34 @@ public class Wajavassr {
                     (String) jh.get("slurl")));
         }
         return hitokotos;
+    }
+
+    /**
+     * 投稿。画像添付は未実装。
+     * 
+     * @param message 投稿する文章。
+     * @param repliedRid リプライ先ヒトコトの RID。
+     * @param pict 画像ファイル。（未実装)
+     * @throws IOException 投稿に失敗。または、URL エンコードに失敗。
+     */
+    public void post(String message, String repliedRid, File pict) throws IOException {
+        String path = "/statuses/update.json?status=" + URLEncoder.encode(message, "UTF-8") + "&source=" + URLEncoder.encode(getClientName(), "UTF-8");
+        if(repliedRid != null)
+            path += "&reply_status_rid=" + repliedRid;
+        HttpURLConnection c = createHttpURLConnection("POST", path, true);
+        // 画像送信は未実装。
+        // 参考
+        //  自前で実装する場合
+        //   http://blog.oklab.org/?p=136
+        //  Apache の HttpClient を使用する場合
+        //   http://blog.oklab.org/?p=132
+        //   http://d.hatena.ne.jp/idesaku/20081029/1225254524
+        //c.setDoOutput(true);
+        c.connect();
+        // HttpURLConnection#getResponseCode() などがないと、投稿に失敗する。
+        if(c.getResponseCode() != HttpURLConnection.HTTP_OK)
+            throw new IOException("Server returned HTTP response code: \"" + c.getResponseCode() + " " + c.getResponseMessage() + "\" for URL: " + c.getURL());
+        System.err.println("connect: " + path + " -> " + c.getResponseCode() + " " + c.getResponseMessage());
     }
 
     /**
