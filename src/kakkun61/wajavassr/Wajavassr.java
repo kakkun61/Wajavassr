@@ -5,8 +5,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -17,6 +19,8 @@ import java.util.List;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
+import kakkun61.wajavassr.log.Log;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.json.simple.JSONArray;
@@ -24,14 +28,15 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-public class Wajavassr {
+public class Wajavassr implements Log {
     private final String wassr = "http://api.wassr.jp";
     private String auth = null;
     private static final String DEFAULT_USER_AGENT = "Wajavassr/00.01";
     private String userAgent = DEFAULT_USER_AGENT;
     private static final String DEFAULT_CLIENT_NAME = "Wajavassr";
-    private String clientName = DEFAULT_CLIENT_NAME;
+    protected String clientName = DEFAULT_CLIENT_NAME;
     private final JSONParser parser = new JSONParser();
+    private Log log = null;
 
     /**
      * クライアントを作る。認証が必要な時は、先に必ず {@link #setUser(String, String)} を呼び出すこと。
@@ -85,7 +90,13 @@ public class Wajavassr {
      * @return
      */
     public String getClientName() {
-        return clientName;
+        try {
+            return URLDecoder.decode(clientName, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            w("ここには来ないはず。", e);
+        }
+        w("ここには来ないはず。");
+        return null;
     }
 
     /**
@@ -96,7 +107,20 @@ public class Wajavassr {
     public void setClientName(String clientName) {
         if (clientName == null)
             this.clientName = DEFAULT_CLIENT_NAME;
-        this.clientName = clientName;
+        try {
+            this.clientName = URLEncoder.encode(clientName, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            w("ここには来ないはず。", e);
+        }
+    }
+
+    /**
+     * ログ出力クラスを設定する。出力しない時は、{@code null} に設定する。
+     * 
+     * @param log
+     */
+    public void setLog(Log log) {
+        this.log = log;
     }
 
     /**
@@ -215,7 +239,7 @@ public class Wajavassr {
         }
         HttpURLConnection c = createHttpURLConnection("GET", path, authorization);
         c.connect();
-        System.err.println("connect: " + path + " -> " + c.getResponseCode() + " " + c.getResponseMessage());
+        d("connect: " + path + " -> " + c.getResponseCode() + " " + c.getResponseMessage());
         if(c.getResponseCode() != HttpURLConnection.HTTP_OK)
             throw new IOException("Server returned HTTP response code: \"" + c.getResponseCode() + " " + c.getResponseMessage() + "\" for URL: " + c.getURL());
         return new BufferedReader(new InputStreamReader(c.getInputStream(), "UTF-8"));
@@ -304,7 +328,7 @@ public class Wajavassr {
      * @throws IOException 投稿に失敗。または、URL エンコードに失敗。
      */
     public void post(String message, String repliedRid, File pict) throws IOException {
-        String path = "/statuses/update.json?status=" + URLEncoder.encode(message, "UTF-8") + "&source=" + URLEncoder.encode(getClientName(), "UTF-8");
+        String path = "/statuses/update.json?status=" + URLEncoder.encode(message, "UTF-8") + "&source=" + clientName;
         if(repliedRid != null)
             path += "&reply_status_rid=" + repliedRid;
         HttpURLConnection c = createHttpURLConnection("POST", path, true);
@@ -320,7 +344,7 @@ public class Wajavassr {
         // HttpURLConnection#getResponseCode() などがないと、投稿に失敗する。
         if(c.getResponseCode() != HttpURLConnection.HTTP_OK)
             throw new IOException("Server returned HTTP response code: \"" + c.getResponseCode() + " " + c.getResponseMessage() + "\" for URL: " + c.getURL());
-        System.err.println("connect: " + path + " -> " + c.getResponseCode() + " " + c.getResponseMessage());
+        d("connect: " + path + " -> " + c.getResponseCode() + " " + c.getResponseMessage());
     }
 
     /**
@@ -339,5 +363,64 @@ public class Wajavassr {
         byte[] result = mac.doFinal(("app_key" + appKey).getBytes());
         String sig = new String(Hex.encodeHex(result));
         return "http://wassr.jp/auth/?app_key=" + appKey + "&sig=" + sig;
+    }
+
+    @Override
+    public void v(String message) {
+        if(log != null)
+            log.v(message);
+    }
+
+    @Override
+    public void v(String message, Throwable thr) {
+        log.v(message, thr);
+    }
+
+    @Override
+    public void d(String message) {
+        if(log != null)
+            log.d(message);
+    }
+
+    @Override
+    public void d(String message, Throwable thr) {
+        if(log != null)
+            log.d(message, thr);
+    }
+
+    @Override
+    public void i(String message) {
+        if(log != null)
+            log.i(message);
+    }
+
+    @Override
+    public void i(String message, Throwable thr) {
+        if(log != null)
+            log.i(message, thr);
+    }
+
+    @Override
+    public void w(String message) {
+        if(log != null)
+            log.w(message);
+    }
+
+    @Override
+    public void w(String message, Throwable thr) {
+        if(log != null)
+            log.w(message, thr);
+    }
+
+    @Override
+    public void e(String message) {
+        if(log != null)
+            log.e(message);
+    }
+
+    @Override
+    public void e(String message, Throwable thr) {
+        if(log != null)
+            log.e(message, thr);
     }
 }
