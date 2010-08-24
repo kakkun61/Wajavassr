@@ -47,12 +47,12 @@ public interface Log {
     public void w(String message, Throwable thr);
 
     /**
-     * Level error. Level 5 of 5.
+     * Level error. Level 5 of 5. Most important.
      */
     public void e(String message);
 
     /**
-     * Level error. Level 5 of 5.
+     * Level error. Level 5 of 5. Most important.
      */
     public void e(String message, Throwable thr);
 }
