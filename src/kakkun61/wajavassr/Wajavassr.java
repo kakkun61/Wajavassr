@@ -28,6 +28,11 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+/**
+ * Wassr クライアントライブラリ on Java。ヒトコト取得メソッドは、4層（4 Layers）に分かれる。
+ * 
+ * @author Kazuki Okamoto
+ */
 public class Wajavassr implements Log {
     private final String wassr = "http://api.wassr.jp";
     private String auth = null;
@@ -93,9 +98,9 @@ public class Wajavassr implements Log {
         try {
             return URLDecoder.decode(clientName, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            w("ここには来ないはず。", e);
+            v("ここには来ないはず。", e);
         }
-        w("ここには来ないはず。");
+        v("ここには来ないはず。");
         return null;
     }
 
@@ -124,7 +129,7 @@ public class Wajavassr implements Log {
     }
 
     /**
-     * 自分への返信を得る。{@code fromPage} から {@code toPage}-1 までのページを読み込む。
+     * 自分への返信を得る。{@code fromPage} から {@code toPage}-1 までのページを読み込む。Layer 3。
      * 
      * @param fromPage 読み込むページの上端点。
      * @param toPage 読み込むページの下端点。（これを含まない）
@@ -143,7 +148,7 @@ public class Wajavassr implements Log {
     }
 
     /**
-     * 友達タイムラインを得る。普通、単に「タイムライン」と呼ばれるもの。{@code fromPage} から {@code toPage}-1 までのページを読み込む。
+     * 友達タイムラインを得る。普通、単に「タイムライン」と呼ばれるもの。{@code fromPage} から {@code toPage}-1 までのページを読み込む。Layer 3。
      * 
      * @param fromPage 読み込むページの上端点。
      * @param toPage 読み込むページの下端点。（これを含まない）
@@ -162,7 +167,7 @@ public class Wajavassr implements Log {
     }
 
     /**
-     * ユーザタイムラインを得る。
+     * ユーザタイムラインを得る。Layer 3。
      * 
      * @param id ユーザID。
      * @return 得られたヒトコトをパースした {@link java.util.List List}{@code <}{@link FriendHitokoto}{@code >}。
@@ -178,13 +183,19 @@ public class Wajavassr implements Log {
         return getFriendHitokotos("/statuses/user_timeline.json", id, 0, 0, false);
     }
 
+    /**
+     * 自分のヒトコトを得る。Layer 3。
+     * @return
+     * @throws IOException
+     * @throws ParseException
+     */
     public List<FriendHitokoto> getMyTimeline() throws IOException, ParseException {
         // ユーザタイムラインで、ユーザIDを指定せず、認証をすれば、自分のヒトコトが得られる。
         return getFriendHitokotos("/statuses/user_timeline.json", null, 0, 0, true);
     }
 
     /**
-     * 友達ヒトコト形式で得られるタイムライン用の取得メソッド。{@code fromPage} から {@code toPage}-1 までのページを読み込む。ページの指定をしないときは、{@code fromPage}, {@code toPage} ともに {@code 0}。
+     * 友達ヒトコト形式で得られるタイムライン用の取得メソッド。{@code fromPage} から {@code toPage}-1 までのページを読み込む。ページの指定をしないときは、{@code fromPage}, {@code toPage} ともに {@code 0}。Layer 2。
      * 
      * @param path ルート以下のパス。“http://api.wassr.jp/statuses/friends_timeline.json” の場合、“/statuses/friends_timeline.json”。
      * @param id ユーザID。指定しない時は {@code null}。
@@ -198,11 +209,11 @@ public class Wajavassr implements Log {
     protected List<FriendHitokoto> getFriendHitokotos(String path, String id, int fromPage, int toPage, boolean authorization) throws IOException, ParseException {
         // ページ指定なし
         if (fromPage == 0 && toPage == 0)
-            return parseJsonFriendHitokoto(createConnectedReader(path, id, 0, authorization));
+            return parseJsonToFriendHitokotos(createConnectedReader(path, id, 0, authorization));
 
-        List<FriendHitokoto> hitokotos = new ArrayList<FriendHitokoto>(20*(toPage-fromPage));
+        List<FriendHitokoto> hitokotos = new ArrayList<FriendHitokoto>(20*(toPage-fromPage)); // 1ページ=20ヒトコト
         for (int page=fromPage; page<toPage; page++) {
-            List<FriendHitokoto> hs = parseJsonFriendHitokoto(createConnectedReader(path, id, page, authorization) );
+            List<FriendHitokoto> hs = parseJsonToFriendHitokotos(createConnectedReader(path, id, page, authorization) );
             if (hs.size() == 0)
                 break;
             // ダブるヒトコトを省いて結合
@@ -219,7 +230,7 @@ public class Wajavassr implements Log {
     }
 
     /**
-     * データ取得用リーダを作る。
+     * データ取得用リーダを作る。Layer 1。
      * 
      * @param path path ルート以下のパス。“http://api.wassr.jp/statuses/friends_timeline.json” の場合、“/statuses/friends_timeline.json”。
      * @param id id ユーザID。指定しない時は {@code null}。
@@ -248,12 +259,12 @@ public class Wajavassr implements Log {
     }
 
     /**
-     * Wassr に対し、指定されたパスに指定された HTTP メソッドでコネクションを張る。
+     * Wassr に対し、指定されたパスに指定された HTTP メソッドでコネクションを張る準備のできた {@link java.net.HttpURLConnection HttpURLConnection} を返す。つまり、{@link java.net.HttpURLConnection#connect() HttpURLConnection.connect()} は未実行。Layer 1。
      * 
      * @param method HTTP メソッド。GET、POST など。
      * @param path ルート以下のパス。“http://api.wassr.jp/statuses/friends_timeline.json” の場合、“/statuses/friends_timeline.json”。
      * @param authorization 認証が必要かどうか。必要なら、{@code true}。
-     * @return 確立したコネクション
+     * @return 確立の準備のできたコネクション。
      * @throws IOException コネクションの確立に失敗。
      */
     protected HttpURLConnection createHttpURLConnection(String method, String path, boolean authorization) throws IOException {
@@ -284,7 +295,7 @@ public class Wajavassr implements Log {
      * @throws IOException
      * @throws ParseException
      */
-    protected List<FriendHitokoto> parseJsonFriendHitokoto(Reader r) throws IOException, ParseException {
+    protected List<FriendHitokoto> parseJsonToFriendHitokotos(Reader r) throws IOException, ParseException {
         JSONArray jhs; // Json HitokotoS の略
         try {
             jhs = (JSONArray) parser.parse(r);
