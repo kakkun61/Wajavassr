@@ -105,82 +105,162 @@ public class FriendHitokoto {
         this.slurl = slurl;
     }
 
+    /**
+     * 本文（HTML版）を得る。
+     * @return
+     */
     public String getHtml() {
         return html;
     }
 
+    /**
+     * 本文（text版）を得る。
+     * @return
+     */
     public String getText() {
         return text;
     }
 
+    /**
+     * このヒトコトのRID（連番）を得る。
+     * @return
+     */
     public String getRid() {
         return rid;
     }
 
+    /**
+     * このヒトコトのIDを得る。
+     * @return
+     */
     public long getId() {
         return id;
     }
 
+    /**
+     * このヒトコトのURL つまり、http://wassr.jp/user/{@linkplain #userLoginId}/statuses/{@linkplain #rid}を得る。
+     * @return
+     */
     public String getLink() {
         return link;
     }
 
+    /**
+     * ユーザIDを得る。
+     * @return
+     */
     public String getUserLoginId() {
         return userLoginId;
     }
 
+    /**
+     * ユーザ名を得る。
+     * @return
+     */
     public String getUserScreenName() {
         return userScreenName;
     }
 
+    /**
+     * プロフィール画像のURLを得る。
+     * @return
+     */
     public String getUserProfileImageUrl() {
         return userProfileImageUrl;
     }
 
+    /**
+     * 友達のみに公開かどうかを得る。
+     * @return
+     */
     public boolean getUserProtected() {
         return userProtected;
     }
 
+    /**
+     * 添付画像のURLを得る。
+     * @return
+     */
     public String getPhotoUrl() {
         return photoUrl;
     }
 
+    /**
+     * 添付画像のサムネイルのURLを得る。
+     * @return
+     */
     public String getPhotoThombnailUrl() {
         return photoThombnailUrl;
     }
 
+    /**
+     * イイネした人のユーザIDを得る。
+     * @return
+     */
     public String[] getFavorites() {
         return favorites;
     }
 
+    /**
+     * リプライ先ヒトコト（text版）を得る。
+     * @return
+     */
     public String getReplyMessage() {
         return replyMessage;
     }
 
+    /**
+     * リプライ先ヒトコトのURLを得る。
+     * @return
+     */
     public String getReplyStatusUrl() {
         return replyStatusUrl;
     }
 
+    /**
+     * リプライ先ヒトコトの投稿者のログイン名を得る。
+     * @return
+     */
     public String getReplyUserLoginId() {
         return replyUserLoginId;
     }
 
+    /**
+     * リプライ先ヒトコトの投稿者のユーザ名を得る。
+     * @return
+     */
     public String getReplyUserNick() {
         return replyUserNick;
     }
 
+    /**
+     *位置情報の名前? を得る。
+     * @return
+     */
     public String getAreaname() {
         return areaname;
     }
 
+    /**
+     * 位置情報のコード?を得る。
+     * @return
+     */
     public String getAreacode() {
         return areacode;
     }
 
+    /**
+     * エポック（秒）を得る。
+     * @return
+     */
     public long getEpoch() {
         return epoch;
     }
 
+    /**
+     * Second Life URL?を得る。
+     * @return
+     */
     public String getSlurl() {
         return slurl;
     }
